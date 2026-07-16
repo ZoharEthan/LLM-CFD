@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# OS files
+.DS_Store
+*.icloud
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Paper drafts and working documents (not part of code repo)
+outputs/
+uploads/
+*.docx
+*.tex
+*.pdf
+
+# Root-level research/working files (not part of code repo)
+/*.md
+!README.md
+!/docs/SUPPLEMENTARY_THEORY.md
+!/experiments/data/README.md
+!/experiments/PROMPT_TEMPLATES.md
+!/experiments/README.md
+
+# Root-level scripts (paper building tools, not experiment code)
+/*.py
+
+# Environment
+.env
+.env.local
+venv/
+.venv/
+env/
