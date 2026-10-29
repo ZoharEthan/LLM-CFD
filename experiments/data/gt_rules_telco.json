@@ -1,108 +1,344 @@
 {
-  "dataset": "Telco Customer Churn",
-  "n_rules": 15,
-  "annotation_method": "Dual-annotator, two independent annotators, Cohen kappa=0.82",
-  "type_breakdown": {
-    "fd": 7,
-    "range": 2,
-    "enum": 4,
-    "logic": 1,
-    "consistency": 1
+ "dataset": "Telco Customer Churn",
+ "n_rules": 15,
+ "annotation_method": "Dual-annotator, two independent annotators, Cohen kappa=0.82",
+ "type_breakdown": {
+  "fd": 7,
+  "range": 2,
+  "enum": 4,
+  "logic": 1,
+  "consistency": 1
+ },
+ "schema": {
+  "condition_values": "条件属性的取值约束；空对象表示该规则对所有记录生效",
+  "expected_pattern": "依赖属性的期望模式：values / min+max / expression / relation / mapping",
+  "param_source": "该规则的 condition_values 与 expected_pattern 的来源",
+  "data_check": "在数据上的核验结果（受检记录数、违规数、违规率、判定）"
+ },
+ "provenance": {
+  "filled_on": "2026-10-14",
+  "filled_by": "补齐 condition_values / expected_pattern / param_source / data_check 四个字段",
+  "sync_source": "src/experiment.py :: build_ground_truth_cfds()（其 docstring 明示 matching gt_rules_telco.json）",
+  "note": "未改动任何已标注的 type / dependent_attribute / condition_attributes；仅补字段并附数据核验。"
+ },
+ "rules": [
+  {
+   "dependent_attribute": "OnlineSecurity",
+   "condition_attributes": [
+    "InternetService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "InternetService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No internet service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1526,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
   },
-  "rules": [
-    {
-      "dependent_attribute": "OnlineSecurity",
-      "condition_attributes": [
-        "InternetService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "OnlineBackup",
-      "condition_attributes": [
-        "InternetService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "DeviceProtection",
-      "condition_attributes": [
-        "InternetService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "TechSupport",
-      "condition_attributes": [
-        "InternetService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "StreamingTV",
-      "condition_attributes": [
-        "InternetService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "StreamingMovies",
-      "condition_attributes": [
-        "InternetService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "MultipleLines",
-      "condition_attributes": [
-        "PhoneService"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "MonthlyCharges",
-      "condition_attributes": [
-        "Contract"
-      ],
-      "type": "range"
-    },
-    {
-      "dependent_attribute": "MonthlyCharges",
-      "condition_attributes": [],
-      "type": "range"
-    },
-    {
-      "dependent_attribute": "SeniorCitizen",
-      "condition_attributes": [],
-      "type": "enum"
-    },
-    {
-      "dependent_attribute": "gender",
-      "condition_attributes": [],
-      "type": "enum"
-    },
-    {
-      "dependent_attribute": "Partner",
-      "condition_attributes": [],
-      "type": "enum"
-    },
-    {
-      "dependent_attribute": "Dependents",
-      "condition_attributes": [],
-      "type": "enum"
-    },
-    {
-      "dependent_attribute": "tenure",
-      "condition_attributes": [],
-      "type": "logic"
-    },
-    {
-      "dependent_attribute": "TotalCharges",
-      "condition_attributes": [
-        "tenure",
-        "MonthlyCharges"
-      ],
-      "type": "consistency"
-    }
-  ]
+  {
+   "dependent_attribute": "OnlineBackup",
+   "condition_attributes": [
+    "InternetService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "InternetService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No internet service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1526,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "DeviceProtection",
+   "condition_attributes": [
+    "InternetService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "InternetService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No internet service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1526,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "TechSupport",
+   "condition_attributes": [
+    "InternetService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "InternetService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No internet service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1526,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "StreamingTV",
+   "condition_attributes": [
+    "InternetService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "InternetService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No internet service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1526,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "StreamingMovies",
+   "condition_attributes": [
+    "InternetService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "InternetService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No internet service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1526,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "MultipleLines",
+   "condition_attributes": [
+    "PhoneService"
+   ],
+   "type": "fd",
+   "condition_values": {
+    "PhoneService": "No"
+   },
+   "expected_pattern": {
+    "values": [
+     "No phone service"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 682,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "MonthlyCharges",
+   "condition_attributes": [
+    "Contract"
+   ],
+   "type": "range",
+   "condition_values": {
+    "Contract": "Two year"
+   },
+   "expected_pattern": {
+    "min": 45,
+    "max": 120
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 1695,
+    "n_violations": 683,
+    "violation_rate": 0.40295,
+    "status": "FAILS_ON_DATA"
+   }
+  },
+  {
+   "dependent_attribute": "MonthlyCharges",
+   "condition_attributes": [],
+   "type": "range",
+   "condition_values": {},
+   "expected_pattern": {
+    "min": 18,
+    "max": 120
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7043,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "SeniorCitizen",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "0",
+     "1"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7043,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "gender",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "Male",
+     "Female"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7043,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "Partner",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "Yes",
+     "No"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7043,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "Dependents",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "Yes",
+     "No"
+    ]
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7043,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "tenure",
+   "condition_attributes": [],
+   "type": "logic",
+   "condition_values": {},
+   "expected_pattern": {
+    "expression": "tenure >= 0"
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7043,
+    "n_violations": 0,
+    "violation_rate": 0.0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "TotalCharges",
+   "condition_attributes": [
+    "tenure",
+    "MonthlyCharges"
+   ],
+   "type": "consistency",
+   "condition_values": {},
+   "expected_pattern": {
+    "relation": "TotalCharges ≈ tenure × MonthlyCharges"
+   },
+   "param_source": "synced from src/experiment.py:build_ground_truth_cfds()",
+   "data_check": {
+    "checked_on": "telco_churn.csv",
+    "n_checked": 7032,
+    "n_violations": 4870,
+    "violation_rate": 0.692548,
+    "status": "FAILS_ON_DATA"
+   }
+  }
+ ]
 }

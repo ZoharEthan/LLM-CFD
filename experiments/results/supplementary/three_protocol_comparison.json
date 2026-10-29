@@ -1,0 +1,162 @@
+{
+  "GT15": {
+    "LLM-CFD": {
+      "key": {
+        "precision": 0.6087,
+        "recall": 0.9333,
+        "f1": 0.7368,
+        "tp": 14,
+        "fp": 9,
+        "fn": 1
+      },
+      "key+cond": {
+        "precision": 0.5652,
+        "recall": 0.8667,
+        "f1": 0.6842,
+        "tp": 13,
+        "fp": 10,
+        "fn": 2
+      },
+      "strict": {
+        "precision": 0.5217,
+        "recall": 0.8,
+        "f1": 0.6316,
+        "tp": 12,
+        "fp": 11,
+        "fn": 3
+      }
+    },
+    "CTANE": {
+      "key": {
+        "precision": 0.014,
+        "recall": 0.8,
+        "f1": 0.0276,
+        "tp": 12,
+        "fp": 844,
+        "fn": 3
+      },
+      "key+cond": {
+        "precision": 0.014,
+        "recall": 0.8,
+        "f1": 0.0276,
+        "tp": 12,
+        "fp": 844,
+        "fn": 3
+      },
+      "strict": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 856,
+        "fn": 15
+      }
+    },
+    "CFDMiner-BL": {
+      "key": {
+        "precision": 0.0884,
+        "recall": 0.8667,
+        "f1": 0.1605,
+        "tp": 13,
+        "fp": 134,
+        "fn": 2
+      },
+      "key+cond": {
+        "precision": 0.034,
+        "recall": 0.3333,
+        "f1": 0.0617,
+        "tp": 5,
+        "fp": 142,
+        "fn": 10
+      },
+      "strict": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 147,
+        "fn": 15
+      }
+    }
+  },
+  "GT14": {
+    "LLM-CFD": {
+      "key": {
+        "precision": 0.5652,
+        "recall": 0.9286,
+        "f1": 0.7027,
+        "tp": 13,
+        "fp": 10,
+        "fn": 1
+      },
+      "key+cond": {
+        "precision": 0.5652,
+        "recall": 0.9286,
+        "f1": 0.7027,
+        "tp": 13,
+        "fp": 10,
+        "fn": 1
+      },
+      "strict": {
+        "precision": 0.5217,
+        "recall": 0.8571,
+        "f1": 0.6486,
+        "tp": 12,
+        "fp": 11,
+        "fn": 2
+      }
+    },
+    "CTANE": {
+      "key": {
+        "precision": 0.014,
+        "recall": 0.8571,
+        "f1": 0.0276,
+        "tp": 12,
+        "fp": 844,
+        "fn": 2
+      },
+      "key+cond": {
+        "precision": 0.014,
+        "recall": 0.8571,
+        "f1": 0.0276,
+        "tp": 12,
+        "fp": 844,
+        "fn": 2
+      },
+      "strict": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 856,
+        "fn": 14
+      }
+    },
+    "CFDMiner-BL": {
+      "key": {
+        "precision": 0.0816,
+        "recall": 0.8571,
+        "f1": 0.1491,
+        "tp": 12,
+        "fp": 135,
+        "fn": 2
+      },
+      "key+cond": {
+        "precision": 0.034,
+        "recall": 0.3571,
+        "f1": 0.0621,
+        "tp": 5,
+        "fp": 142,
+        "fn": 9
+      },
+      "strict": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "tp": 0,
+        "fp": 147,
+        "fn": 14
+      }
+    }
+  }
+}

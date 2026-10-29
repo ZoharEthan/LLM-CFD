@@ -1,92 +1,794 @@
 {
-  "dataset": "UCI Adult Census Income",
-  "n_rules": 12,
-  "annotation_method": "Dual-annotator, two independent annotators, Cohen kappa=0.75",
-  "type_breakdown": {
-    "fd": 5,
-    "range": 2,
-    "enum": 3,
-    "logic": 2,
-    "consistency": 0
+ "dataset": "UCI Adult Census Income",
+ "n_rules": 12,
+ "annotation_method": "Dual-annotator, two independent annotators, Cohen kappa=0.75",
+ "type_breakdown": {
+  "fd": 4,
+  "range": 2,
+  "logic": 3,
+  "enum": 3
+ },
+ "type_breakdown_correction": {
+  "previous": {
+   "fd": 5,
+   "range": 2,
+   "enum": 3,
+   "logic": 2,
+   "consistency": 0
   },
-  "rules": [
-    {
-      "dependent_attribute": "education_num",
-      "condition_attributes": [
-        "education"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "hours_per_week",
-      "condition_attributes": [
-        "occupation"
-      ],
-      "type": "range"
-    },
-    {
-      "dependent_attribute": "hours_per_week",
-      "condition_attributes": [
-        "sex"
-      ],
-      "type": "range"
-    },
-    {
-      "dependent_attribute": "income",
-      "condition_attributes": [
-        "education"
-      ],
-      "type": "logic"
-    },
-    {
-      "dependent_attribute": "income",
-      "condition_attributes": [
-        "hours_per_week"
-      ],
-      "type": "logic"
-    },
-    {
-      "dependent_attribute": "marital_status",
-      "condition_attributes": [
-        "age"
-      ],
-      "type": "logic"
-    },
-    {
-      "dependent_attribute": "relationship",
-      "condition_attributes": [
-        "marital_status"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "relationship",
-      "condition_attributes": [
-        "sex"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "occupation",
-      "condition_attributes": [
-        "education"
-      ],
-      "type": "fd"
-    },
-    {
-      "dependent_attribute": "workclass",
-      "condition_attributes": [],
-      "type": "enum"
-    },
-    {
-      "dependent_attribute": "race",
-      "condition_attributes": [],
-      "type": "enum"
-    },
-    {
-      "dependent_attribute": "native_country",
-      "condition_attributes": [],
-      "type": "enum"
+  "corrected_to": {
+   "fd": 4,
+   "range": 2,
+   "logic": 3,
+   "enum": 3
+  },
+  "reason": "原汇总与实际（及 src/adult_unified_experiment.py::ADULT_GROUND_TRUTH）不一致：fd 多计 1、logic 少计 1。已按实际规则数组修正。"
+ },
+ "schema": {
+  "condition_values": "条件属性的取值约束；空对象表示对所有记录生效",
+  "expected_pattern": "依赖属性的期望模式；null 表示当前无法给出可执行模式",
+  "pattern_strength": "strict / directional；directional 表示仅方向性趋势",
+  "needs_manual_definition": "true 表示需原标注人补全或重新界定",
+  "param_source": "参数来源（同步 / 推导 / 无法推导）",
+  "data_check": "在数据上的核验结果"
+ },
+ "provenance": {
+  "filled_on": "2026-10-14",
+  "filled_by": "补齐 condition_values / expected_pattern / param_source / data_check；修正 type_breakdown",
+  "derivation_basis": "census+income/adult.test（16,281 行）+ census+income/adult.names（官方值域说明）",
+  "note": "未改动任何已标注的 type / dependent_attribute / condition_attributes。"
+ },
+ "rules": [
+  {
+   "dependent_attribute": "education_num",
+   "condition_attributes": [
+    "education"
+   ],
+   "type": "fd",
+   "condition_values": {},
+   "expected_pattern": {
+    "mapping": {
+     "11th": "7",
+     "HS-grad": "9",
+     "Assoc-acdm": "12",
+     "Some-college": "10",
+     "10th": "6",
+     "Prof-school": "15",
+     "7th-8th": "4",
+     "Bachelors": "13",
+     "Masters": "14",
+     "Doctorate": "16",
+     "5th-6th": "3",
+     "Assoc-voc": "11",
+     "9th": "5",
+     "12th": "8",
+     "1st-4th": "2",
+     "Preschool": "1"
     }
-  ]
+   },
+   "param_source": "derived from adult.test: education 与 education_num 一一对应（16 组）",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_condition_values": 16,
+    "n_multi_valued": 0,
+    "status": "holds（严格函数依赖）"
+   }
+  },
+  {
+   "dependent_attribute": "hours_per_week",
+   "condition_attributes": [
+    "occupation"
+   ],
+   "type": "range",
+   "condition_values": {},
+   "expected_pattern": {
+    "min": 1,
+    "max": 99
+   },
+   "param_source": "derived from adult.test: occupation 各取值组内 hours_per_week 的观测最小/最大值",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_groups": 14,
+    "per_group_range": {
+     "Machine-op-inspct": {
+      "n": 1020,
+      "min": 1,
+      "max": 86
+     },
+     "Farming-fishing": {
+      "n": 496,
+      "min": 1,
+      "max": 99
+     },
+     "Protective-serv": {
+      "n": 334,
+      "min": 11,
+      "max": 99
+     },
+     "Other-service": {
+      "n": 1628,
+      "min": 2,
+      "max": 99
+     },
+     "Prof-specialty": {
+      "n": 2032,
+      "min": 1,
+      "max": 99
+     },
+     "Craft-repair": {
+      "n": 2013,
+      "min": 2,
+      "max": 99
+     },
+     "Adm-clerical": {
+      "n": 1841,
+      "min": 3,
+      "max": 99
+     },
+     "Exec-managerial": {
+      "n": 2020,
+      "min": 1,
+      "max": 99
+     },
+     "Tech-support": {
+      "n": 518,
+      "min": 3,
+      "max": 84
+     },
+     "Sales": {
+      "n": 1854,
+      "min": 2,
+      "max": 99
+     },
+     "Priv-house-serv": {
+      "n": 93,
+      "min": 2,
+      "max": 99
+     },
+     "Transport-moving": {
+      "n": 758,
+      "min": 4,
+      "max": 99
+     },
+     "Handlers-cleaners": {
+      "n": 702,
+      "min": 4,
+      "max": 99
+     },
+     "Armed-Forces": {
+      "n": 6,
+      "min": 40,
+      "max": 50
+     }
+    },
+    "status": "holds但条件未收窄（各组区间与全局一致）"
+   },
+   "review_note": "条件 occupation 各分组的 hours_per_week 取值区间与全局区间相同，该条件化范围约束在本数据上未产生额外限制，建议复核该规则是否应保留"
+  },
+  {
+   "dependent_attribute": "hours_per_week",
+   "condition_attributes": [
+    "sex"
+   ],
+   "type": "range",
+   "condition_values": {},
+   "expected_pattern": {
+    "min": 1,
+    "max": 99
+   },
+   "param_source": "derived from adult.test: sex 各取值组内 hours_per_week 的观测最小/最大值",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_groups": 2,
+    "per_group_range": {
+     "Male": {
+      "n": 10860,
+      "min": 1,
+      "max": 99
+     },
+     "Female": {
+      "n": 5421,
+      "min": 1,
+      "max": 99
+     }
+    },
+    "status": "holds但条件未收窄（各组区间与全局一致）"
+   },
+   "review_note": "条件 sex 各分组的 hours_per_week 取值区间与全局区间相同，该条件化范围约束在本数据上未产生额外限制，建议复核该规则是否应保留"
+  },
+  {
+   "dependent_attribute": "income",
+   "condition_attributes": [
+    "education"
+   ],
+   "type": "logic",
+   "condition_values": {},
+   "expected_pattern": null,
+   "pattern_strength": "directional",
+   "needs_manual_definition": true,
+   "param_source": "不可作为硬约束：adult.test 上表现为方向性关联而非确定性约束",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "observed_association": {
+     "10th": {
+      "n": 456,
+      "rate": 0.055
+     },
+     "11th": {
+      "n": 637,
+      "rate": 0.05
+     },
+     "12th": {
+      "n": 224,
+      "rate": 0.067
+     },
+     "1st-4th": {
+      "n": 79,
+      "rate": 0.025
+     },
+     "5th-6th": {
+      "n": 176,
+      "rate": 0.062
+     },
+     "7th-8th": {
+      "n": 309,
+      "rate": 0.071
+     },
+     "9th": {
+      "n": 242,
+      "rate": 0.058
+     },
+     "Assoc-acdm": {
+      "n": 534,
+      "rate": 0.277
+     },
+     "Assoc-voc": {
+      "n": 679,
+      "rate": 0.237
+     },
+     "Bachelors": {
+      "n": 2670,
+      "rate": 0.409
+     },
+     "Doctorate": {
+      "n": 181,
+      "rate": 0.691
+     },
+     "HS-grad": {
+      "n": 5283,
+      "rate": 0.157
+     },
+     "Masters": {
+      "n": 934,
+      "rate": 0.535
+     },
+     "Preschool": {
+      "n": 32,
+      "rate": 0.031
+     },
+     "Prof-school": {
+      "n": 258,
+      "rate": 0.752
+     },
+     "Some-college": {
+      "n": 3587,
+      "rate": 0.188
+     }
+    },
+    "status": "DIRECTIONAL_ONLY"
+   },
+   "review_note": "该规则在数据上是方向性趋势（非确定约束），若用于错误检测需改为统计判据或由标注人给出确定形式"
+  },
+  {
+   "dependent_attribute": "income",
+   "condition_attributes": [
+    "hours_per_week"
+   ],
+   "type": "logic",
+   "condition_values": {},
+   "expected_pattern": null,
+   "pattern_strength": "directional",
+   "needs_manual_definition": true,
+   "param_source": "不可作为硬约束：adult.test 上表现为方向性关联而非确定性约束",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "observed_association": {
+     "1-34": {
+      "n": 2812,
+      "rate": 0.069
+     },
+     "35-40": {
+      "n": 8698,
+      "rate": 0.203
+     },
+     "41-50": {
+      "n": 2979,
+      "rate": 0.392
+     },
+     "51-99": {
+      "n": 1792,
+      "rate": 0.401
+     }
+    },
+    "status": "DIRECTIONAL_ONLY"
+   },
+   "review_note": "该规则在数据上是方向性趋势（非确定约束），若用于错误检测需改为统计判据或由标注人给出确定形式"
+  },
+  {
+   "dependent_attribute": "marital_status",
+   "condition_attributes": [
+    "age"
+   ],
+   "type": "logic",
+   "condition_values": {},
+   "expected_pattern": null,
+   "pattern_strength": "directional",
+   "needs_manual_definition": true,
+   "param_source": "不可作为硬约束：adult.test 上表现为方向性关联而非确定性约束",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "observed_association": {
+     "17": {
+      "n": 200,
+      "rate": 0.0
+     },
+     "18": {
+      "n": 312,
+      "rate": 0.0
+     },
+     "19": {
+      "n": 341,
+      "rate": 0.0
+     },
+     "20": {
+      "n": 360,
+      "rate": 0.0
+     },
+     "21": {
+      "n": 376,
+      "rate": 0.0
+     },
+     "22": {
+      "n": 413,
+      "rate": 0.0
+     },
+     "23": {
+      "n": 452,
+      "rate": 0.0
+     },
+     "24": {
+      "n": 408,
+      "rate": 0.0
+     },
+     "25": {
+      "n": 354,
+      "rate": 0.0
+     },
+     "26": {
+      "n": 368,
+      "rate": 0.0
+     },
+     "27": {
+      "n": 397,
+      "rate": 0.0
+     },
+     "28": {
+      "n": 413,
+      "rate": 0.0
+     },
+     "29": {
+      "n": 410,
+      "rate": 0.0
+     },
+     "30": {
+      "n": 417,
+      "rate": 0.0
+     },
+     "31": {
+      "n": 437,
+      "rate": 0.0
+     },
+     "32": {
+      "n": 425,
+      "rate": 0.0
+     },
+     "33": {
+      "n": 460,
+      "rate": 0.0
+     },
+     "34": {
+      "n": 417,
+      "rate": 0.0
+     },
+     "35": {
+      "n": 461,
+      "rate": 0.0
+     },
+     "36": {
+      "n": 450,
+      "rate": 0.0
+     },
+     "37": {
+      "n": 422,
+      "rate": 0.0
+     },
+     "38": {
+      "n": 437,
+      "rate": 0.0
+     },
+     "39": {
+      "n": 390,
+      "rate": 0.0
+     },
+     "40": {
+      "n": 393,
+      "rate": 0.0
+     },
+     "41": {
+      "n": 427,
+      "rate": 0.0
+     },
+     "42": {
+      "n": 385,
+      "rate": 0.0
+     },
+     "43": {
+      "n": 334,
+      "rate": 0.0
+     },
+     "44": {
+      "n": 343,
+      "rate": 0.0
+     },
+     "45": {
+      "n": 362,
+      "rate": 0.0
+     },
+     "46": {
+      "n": 360,
+      "rate": 0.0
+     },
+     "47": {
+      "n": 373,
+      "rate": 0.0
+     },
+     "48": {
+      "n": 302,
+      "rate": 0.0
+     },
+     "49": {
+      "n": 270,
+      "rate": 0.0
+     },
+     "50": {
+      "n": 264,
+      "rate": 0.0
+     },
+     "51": {
+      "n": 282,
+      "rate": 0.0
+     },
+     "52": {
+      "n": 260,
+      "rate": 0.0
+     },
+     "53": {
+      "n": 247,
+      "rate": 0.0
+     },
+     "54": {
+      "n": 198,
+      "rate": 0.0
+     },
+     "55": {
+      "n": 202,
+      "rate": 0.0
+     },
+     "56": {
+      "n": 198,
+      "rate": 0.0
+     },
+     "57": {
+      "n": 193,
+      "rate": 0.0
+     },
+     "58": {
+      "n": 189,
+      "rate": 0.0
+     },
+     "59": {
+      "n": 168,
+      "rate": 0.0
+     },
+     "60": {
+      "n": 137,
+      "rate": 0.0
+     },
+     "61": {
+      "n": 150,
+      "rate": 0.0
+     },
+     "62": {
+      "n": 136,
+      "rate": 0.0
+     },
+     "63": {
+      "n": 105,
+      "rate": 0.0
+     },
+     "64": {
+      "n": 132,
+      "rate": 0.0
+     },
+     "65": {
+      "n": 106,
+      "rate": 0.0
+     },
+     "66": {
+      "n": 87,
+      "rate": 0.0
+     },
+     "67": {
+      "n": 87,
+      "rate": 0.0
+     },
+     "68": {
+      "n": 58,
+      "rate": 0.0
+     },
+     "69": {
+      "n": 41,
+      "rate": 0.0
+     },
+     "70": {
+      "n": 44,
+      "rate": 0.0
+     },
+     "71": {
+      "n": 46,
+      "rate": 0.0
+     },
+     "72": {
+      "n": 53,
+      "rate": 0.0
+     },
+     "73": {
+      "n": 44,
+      "rate": 0.0
+     },
+     "74": {
+      "n": 26,
+      "rate": 0.0
+     },
+     "75": {
+      "n": 27,
+      "rate": 0.0
+     },
+     "76": {
+      "n": 23,
+      "rate": 0.0
+     },
+     "77": {
+      "n": 25,
+      "rate": 0.0
+     },
+     "78": {
+      "n": 11,
+      "rate": 0.0
+     },
+     "79": {
+      "n": 8,
+      "rate": 0.0
+     },
+     "80": {
+      "n": 16,
+      "rate": 0.0
+     },
+     "81": {
+      "n": 17,
+      "rate": 0.0
+     },
+     "82": {
+      "n": 3,
+      "rate": 0.0
+     },
+     "83": {
+      "n": 5,
+      "rate": 0.0
+     },
+     "84": {
+      "n": 3,
+      "rate": 0.0
+     },
+     "85": {
+      "n": 2,
+      "rate": 0.0
+     },
+     "87": {
+      "n": 2,
+      "rate": 0.0
+     },
+     "88": {
+      "n": 3,
+      "rate": 0.0
+     },
+     "89": {
+      "n": 2,
+      "rate": 0.0
+     },
+     "90": {
+      "n": 12,
+      "rate": 0.0
+     }
+    },
+    "status": "DIRECTIONAL_ONLY"
+   },
+   "review_note": "该规则在数据上是方向性趋势（非确定约束），若用于错误检测需改为统计判据或由标注人给出确定形式"
+  },
+  {
+   "dependent_attribute": "relationship",
+   "condition_attributes": [
+    "marital_status"
+   ],
+   "type": "fd",
+   "condition_values": {},
+   "expected_pattern": null,
+   "needs_manual_definition": true,
+   "param_source": "无法推导：该规则在 adult.test 上不成立严格函数依赖",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_condition_values": 7,
+    "n_multi_valued": 7,
+    "max_branch": 5,
+    "status": "FAILS_AS_FD"
+   },
+   "review_note": "7 个 marital_status 取值全部对应多个 relationship（最大 5 个），该规则不构成函数依赖，需原标注人重新界定约束形式"
+  },
+  {
+   "dependent_attribute": "relationship",
+   "condition_attributes": [
+    "sex"
+   ],
+   "type": "fd",
+   "condition_values": {},
+   "expected_pattern": null,
+   "needs_manual_definition": true,
+   "param_source": "无法推导：该规则在 adult.test 上不成立严格函数依赖",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_condition_values": 2,
+    "n_multi_valued": 2,
+    "max_branch": 6,
+    "status": "FAILS_AS_FD"
+   },
+   "review_note": "2 个 sex 取值全部对应多个 relationship（最大 6 个），该规则不构成函数依赖，需原标注人重新界定约束形式"
+  },
+  {
+   "dependent_attribute": "occupation",
+   "condition_attributes": [
+    "education"
+   ],
+   "type": "fd",
+   "condition_values": {},
+   "expected_pattern": null,
+   "needs_manual_definition": true,
+   "param_source": "无法推导：该规则在 adult.test 上不成立严格函数依赖",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_condition_values": 16,
+    "n_multi_valued": 16,
+    "max_branch": 14,
+    "status": "FAILS_AS_FD"
+   },
+   "review_note": "16 个 education 取值全部对应多个 occupation（最大 14 个），该规则不构成函数依赖，需原标注人重新界定约束形式"
+  },
+  {
+   "dependent_attribute": "workclass",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "Private",
+     "Self-emp-not-inc",
+     "Self-emp-inc",
+     "Federal-gov",
+     "Local-gov",
+     "State-gov",
+     "Without-pay",
+     "Never-worked"
+    ]
+   },
+   "param_source": "value domain documented in census+income/adult.names（并用 adult.test 观测值域核对）",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_checked": 16281,
+    "observed_values": 8,
+    "missing_placeholder_count": 963,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "race",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "White",
+     "Asian-Pac-Islander",
+     "Amer-Indian-Eskimo",
+     "Other",
+     "Black"
+    ]
+   },
+   "param_source": "value domain documented in census+income/adult.names（并用 adult.test 观测值域核对）",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_checked": 16281,
+    "observed_values": 5,
+    "missing_placeholder_count": 0,
+    "status": "holds"
+   }
+  },
+  {
+   "dependent_attribute": "native_country",
+   "condition_attributes": [],
+   "type": "enum",
+   "condition_values": {},
+   "expected_pattern": {
+    "values": [
+     "United-States",
+     "Cambodia",
+     "England",
+     "Puerto-Rico",
+     "Canada",
+     "Germany",
+     "Outlying-US(Guam-USVI-etc)",
+     "India",
+     "Japan",
+     "Greece",
+     "South",
+     "China",
+     "Cuba",
+     "Iran",
+     "Honduras",
+     "Philippines",
+     "Italy",
+     "Poland",
+     "Jamaica",
+     "Vietnam",
+     "Mexico",
+     "Portugal",
+     "Ireland",
+     "France",
+     "Dominican-Republic",
+     "Laos",
+     "Ecuador",
+     "Taiwan",
+     "Haiti",
+     "Columbia",
+     "Hungary",
+     "Guatemala",
+     "Nicaragua",
+     "Scotland",
+     "Thailand",
+     "Yugoslavia",
+     "El-Salvador",
+     "Trinadad&Tobago",
+     "Peru",
+     "Hong",
+     "Holand-Netherlands"
+    ]
+   },
+   "param_source": "value domain documented in census+income/adult.names（并用 adult.test 观测值域核对）",
+   "data_check": {
+    "checked_on": "census+income/adult.test",
+    "n_checked": 16281,
+    "observed_values": 40,
+    "missing_placeholder_count": 274,
+    "status": "holds"
+   }
+  }
+ ]
 }

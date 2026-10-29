@@ -40,11 +40,10 @@ LLM 驱动的条件函数依赖（Conditional Functional Dependency, CFD）发�
 │   │   ├── non_semantic_anomaly_results.json # 非语义控制实验结果
 │   │   └── l2_l3_results.json           # L2/L3层风险检验结果
 │   ├── PROMPT_TEMPLATES.md              # 完整提示词模板文档
+│   ├── SUPPLEMENTARY_THEORY.md          # 补充理论材料（论文正文引用）
 │   ├── requirements.txt                 # Python 依赖
 │   ├── run_experiment.sh                # 实验运行入口脚本
 │   └── README.md
-├── docs/
-│   └── SUPPLEMENTARY_THEORY.md          # 补充理论材料（论文正文引用）
 ├── LICENSE                              # MIT License
 └── README.md                            # 本文件
 ```
@@ -244,16 +243,14 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 
 ## 补充材料
 
-论文正文引用的补充理论材料位于 `docs/SUPPLEMENTARY_THEORY.md`，包含：
+论文正文引用的补充理论材料位于 `experiments/SUPPLEMENTARY_THEORY.md`，包含：
 
-1. 双向验证机制详细说明
-2. CFD规则冲突消解近似保证（命题2证明）
-3. 多层级数据质量风险检验（L1/L2/L3完整结果）
-4. 形式化框架完整定义（定义3/3a，命题1/2）
-5. CTANE超参数搜索完整结果（Telco + Adult）
-6. CoT+少样本策略15次运行详细数据
-7. 提示词模板引用
-8. 真实世界数据质量验证
+1. CTANE超参数搜索完整结果（Telco + Adult）
+2. CoT+少样本策略15次运行详细数据
+3. 提示词模板引用
+4. 真实世界数据质量验证
+
+注：双向验证机制、CFD规则冲突消解分析、多层级数据质量风险检验、形式化框架完整定义已整合至论文正文§3.4-§3.7。
 
 ## 注意事项
 
@@ -261,4 +258,4 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 - 缓存文件名含 prompt 哈希，修改提示词后会自动生成新缓存，不会污染旧结果。
 - Adult 数据集原始文件位于 `data/census+income/` 目录下，实验中自动预处理（去除缺失值、子采样至 10,000 条，seed=42）。
 - LLM 模型：DeepSeek API (`model="deepseek-chat"`)，智谱 API (`model="glm-4.7-flash"`)
-- 代码仓库地址：https://github.com/LucienHuang2501/LLM-CFD （MIT License）
+- 代码仓库地址：https://github.com/ZoharEthan/LLM-CFD （MIT License）

@@ -1,0 +1,135 @@
+{
+  "telco_ms0.01": {
+    "n_rows": 7043,
+    "cat_columns": [
+      "gender",
+      "Partner",
+      "Dependents",
+      "PhoneService",
+      "MultipleLines",
+      "InternetService",
+      "OnlineSecurity",
+      "OnlineBackup",
+      "DeviceProtection",
+      "TechSupport",
+      "StreamingTV",
+      "StreamingMovies",
+      "Contract",
+      "PaperlessBilling",
+      "PaymentMethod",
+      "Churn",
+      "SeniorCitizen"
+    ],
+    "min_support": 0.01,
+    "min_count": 71,
+    "max_len": 3,
+    "n_frequent_itemsets": 9533,
+    "n_closed": 9191,
+    "n_free": 8692,
+    "n_rules": 26061,
+    "elapsed_s": 4.17,
+    "metrics": {
+      "precision": 0.004818221638195357,
+      "recall": 0.7333333333333333,
+      "f1": 0.009573542210617928,
+      "tp": 11,
+      "fp": 2272,
+      "fn": 4
+    },
+    "extensions": 4,
+    "metrics_with_extensions": {
+      "precision": 0.005684302579798863,
+      "recall": 0.8666666666666667,
+      "f1": 0.011294526498696786,
+      "tp": 13,
+      "fp": 2274,
+      "fn": 2
+    }
+  },
+  "telco_ms0.008": {
+    "n_rows": 7043,
+    "cat_columns": [
+      "gender",
+      "Partner",
+      "Dependents",
+      "PhoneService",
+      "MultipleLines",
+      "InternetService",
+      "OnlineSecurity",
+      "OnlineBackup",
+      "DeviceProtection",
+      "TechSupport",
+      "StreamingTV",
+      "StreamingMovies",
+      "Contract",
+      "PaperlessBilling",
+      "PaymentMethod",
+      "Churn",
+      "SeniorCitizen"
+    ],
+    "min_support": 0.008,
+    "min_count": 57,
+    "max_len": 3,
+    "n_frequent_itemsets": 9726,
+    "n_closed": 9384,
+    "n_free": 8885,
+    "n_rules": 26640,
+    "elapsed_s": 4.35,
+    "metrics": {
+      "precision": 0.004818221638195357,
+      "recall": 0.7333333333333333,
+      "f1": 0.009573542210617928,
+      "tp": 11,
+      "fp": 2272,
+      "fn": 4
+    },
+    "extensions": 4,
+    "metrics_with_extensions": {
+      "precision": 0.005684302579798863,
+      "recall": 0.8666666666666667,
+      "f1": 0.011294526498696786,
+      "tp": 13,
+      "fp": 2274,
+      "fn": 2
+    }
+  },
+  "adult_ms0.01": {
+    "n_rows": 32561,
+    "cat_columns": [
+      "workclass",
+      "education",
+      "marital_status",
+      "occupation",
+      "relationship",
+      "race",
+      "sex",
+      "native_country",
+      "income"
+    ],
+    "min_support": 0.01,
+    "min_count": 326,
+    "max_len": 3,
+    "n_frequent_itemsets": 2068,
+    "n_closed": 2026,
+    "n_free": 2008,
+    "n_rules": 5508,
+    "elapsed_s": 4.95,
+    "metrics": {
+      "precision": 0.021021021021021023,
+      "recall": 0.5833333333333334,
+      "f1": 0.04057971014492754,
+      "tp": 7,
+      "fp": 326,
+      "fn": 5
+    },
+    "extensions": 6,
+    "metrics_with_extensions": {
+      "precision": 0.02064896755162242,
+      "recall": 0.5833333333333334,
+      "f1": 0.03988603988603989,
+      "tp": 7,
+      "fp": 332,
+      "fn": 5
+    }
+  }
+}

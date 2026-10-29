@@ -1,0 +1,22 @@
+{
+  "description": "Few-shot (non-deterministic, temp=0.0, 10 individual runs) per-run F1 and AUPRC for stability boxplot. Data from hscv_temperature experiment.",
+  "n_runs": 10,
+  "f1_median": 0.2408,
+  "f1_iqr": 0.0624,
+  "auprc_median": 0.1764,
+  "auprc_iqr": 0.0498,
+  "hscv_f1": 0.500,
+  "hscv_auprc": 0.730,
+  "per_run": [
+    {"run": 0, "f1": 0.2413, "auprc": 0.1708},
+    {"run": 1, "f1": 0.2673, "auprc": 0.2187},
+    {"run": 2, "f1": 0.2595, "auprc": 0.2217},
+    {"run": 3, "f1": 0.8410, "auprc": 0.9214},
+    {"run": 4, "f1": 0.2317, "auprc": 0.1693},
+    {"run": 5, "f1": 0.4547, "auprc": 0.4583},
+    {"run": 6, "f1": 0.4768, "auprc": 0.5173},
+    {"run": 7, "f1": 0.4749, "auprc": 0.5191},
+    {"run": 8, "f1": 0.4749, "auprc": 0.5191},
+    {"run": 9, "f1": 0.4120, "auprc": 0.5083}
+  ]
+}

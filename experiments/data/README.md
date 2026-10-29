@@ -39,18 +39,32 @@ for the LLM-CFD experiments on the Telco Customer Churn and UCI Adult datasets.
 ### `gt_rules_telco.json`
 
 15 manually annotated CFD rules covering 5 constraint types:
-- `fd` (function dependency): 4 rules
-- `enum` (enumeration): 5 rules
-- `range` (numerical range): 3 rules
+- `fd` (function dependency): **7 rules**
+- `enum` (enumeration): **4 rules**
+- `range` (numerical range): **2 rules**
 - `logic` (logical constraint): 1 rule (tenure ≥ 0)
 - `consistency` (cross-column computation): 1 rule (TotalCharges ≈ tenure × MonthlyCharges)
 
+> **计数修正（2026-10-14）**：此前本节写作 fd 4 / enum 5 / range 3（合计 12，且只列 3 类），
+> 与 `gt_rules_telco.json` 的规则数组及 `src/experiment.py::build_ground_truth_cfds()` 均不符。
+> 现按实际规则数组修正为 5 类共 15 条。
+
 Each rule contains: `type`, `condition_attributes`, `condition_values`,
-`dependent_attribute`, `expected_pattern`.
+`dependent_attribute`, `expected_pattern`, plus `param_source` and `data_check`
+(added 2026-10-14; see `_backup_20261014/` for the pre-fill versions).
 
 ### `gt_rules_adult.json`
 
-12 manually annotated CFD rules for the UCI Adult dataset.
+12 manually annotated CFD rules for the UCI Adult dataset:
+- `fd` (function dependency): 4 rules
+- `enum` (enumeration): 3 rules
+- `range` (numerical range): 2 rules
+- `logic` (logical constraint): 3 rules
+
+> **⚠️ 待复核（2026-10-14）**：核验发现其中 3 条标为 `fd` 的规则在 `adult.test` 上不成立
+> 严格函数依赖，另有 3 条 `logic` 规则只表现为方向性趋势。详见
+> `金标规则补齐报告_20261014.md`。参数（`condition_values`/`expected_pattern`）已补齐，
+> 不成立的规则其 `expected_pattern` 置为 `null` 并标注 `needs_manual_definition`。
 
 ## Anomaly Injection
 

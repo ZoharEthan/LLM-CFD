@@ -40,11 +40,10 @@ LLM 驱动的条件函数依赖（Conditional Functional Dependency, CFD）发�
 │   │   ├── non_semantic_anomaly_results.json # 非语义控制实验结果
 │   │   └── l2_l3_results.json           # L2/L3层风险检验结果
 │   ├── PROMPT_TEMPLATES.md              # 完整提示词模板文档
+│   ├── SUPPLEMENTARY_THEORY.md          # 补充理论材料（论文正文引用）
 │   ├── requirements.txt                 # Python 依赖
 │   ├── run_experiment.sh                # 实验运行入口脚本
 │   └── README.md
-├── docs/
-│   └── SUPPLEMENTARY_THEORY.md          # 补充理论材料（论文正文引用）
 ├── LICENSE                              # MIT License
 └── README.md                            # 本文件
 ```
@@ -244,16 +243,34 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 
 ## 补充材料
 
-论文正文引用的补充理论材料位于 `docs/SUPPLEMENTARY_THEORY.md`，包含：
+### 1. `experiments/SUPPLEMENTARY_THEORY.md` —— 实验数据明细
 
-1. 双向验证机制详细说明
-2. CFD规则冲突消解近似保证（命题2证明）
-3. 多层级数据质量风险检验（L1/L2/L3完整结果）
-4. 形式化框架完整定义（定义3/3a，命题1/2）
-5. CTANE超参数搜索完整结果（Telco + Adult）
-6. CoT+少样本策略15次运行详细数据
-7. 提示词模板引用
-8. 真实世界数据质量验证
+1. CTANE 超参数搜索完整结果（Telco + Adult）
+2. CoT+少样本策略 15 次运行详细数据
+3. 提示词模板引用
+4. 真实世界数据质量验证
+
+### 2. `experiments/FORMAL_DEFINITIONS.md` —— 形式化定义与命题证明
+
+> **终稿因 5,600 字上限省略了附录 A，此处完整归档。**
+> 内容取自原版稿附录 A、§3.3、§3.5，仅做格式规范化（Word 公式转 LaTeX），**不新增定义或结论**。
+
+| 章节 | 内容 |
+|---|---|
+| §1 | 定义 1（CFD：变量约束 + 常量约束） |
+| §2 | 定义 2（LLM-CFD 任务三目标） |
+| §3 | 定义 3（CFD 规则空间 Φ_R，五类约束的形式化对应） |
+| §4 | 定义 4（四元组 S=(Σ, M_LLM, V_CFD, F_risk)，含 HSCV 投票规则） |
+| §5 | 定义 5（风险评分 Risk = αV_CFD + βM_sem + γM_biz） |
+| §6 | 式(1) 条件支持度、式(2) 置信度 |
+| §7 | 梯度违规度量（range / enum-fd / consistency / logic 四类） |
+| §8 | 式(3) 冗余消减 + top-k 聚合 |
+| §9 | 命题 1（CFD 验证的不变性）及其证明 |
+| §10 | 命题 2（冲突消解近似保证，**(1−1/e) 界**）及其证明 |
+| §11 | 与正文的逐条对应表 |
+| §12 | 复现方式（函数入口对应） |
+
+注：双向验证机制、CFD 规则冲突消解分析、多层级数据质量风险检验在终稿中压缩至 §3.4–§3.6。
 
 ## 注意事项
 
@@ -261,4 +278,4 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 - 缓存文件名含 prompt 哈希，修改提示词后会自动生成新缓存，不会污染旧结果。
 - Adult 数据集原始文件位于 `data/census+income/` 目录下，实验中自动预处理（去除缺失值、子采样至 10,000 条，seed=42）。
 - LLM 模型：DeepSeek API (`model="deepseek-chat"`)，智谱 API (`model="glm-4.7-flash"`)
-- 代码仓库地址：https://github.com/LucienHuang2501/LLM-CFD （MIT License）
+- 代码仓库地址：https://github.com/ZoharEthan/LLM-CFD （MIT License）
