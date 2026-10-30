@@ -32,7 +32,10 @@ warnings.filterwarnings('ignore')
 # ============================================================
 # PATHS
 # ============================================================
-BASE = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+BASE = _REPO_ROOT + ""
 TELOCO_PATH = os.path.join(BASE, "experiments/data/telco_churn.csv")
 ADULT_PATH = os.path.join(BASE, "experiments/data/adult.csv")
 RESULTS_PATH = os.path.join(BASE, "experiments/results/ctane")

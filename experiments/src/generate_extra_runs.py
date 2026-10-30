@@ -9,7 +9,10 @@ from openai import OpenAI
 warnings.filterwarnings('ignore')
 
 # Import shared functions from supplementary_experiments
-sys.path.insert(0, "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/src")
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+sys.path.insert(0, _REPO_ROOT + "/experiments/src")
 from supplementary_experiments import (
     DATA_PATH, CACHE_PATH, DEEPSEEK_API_KEY, DEEPSEEK_BASE_URL,
     DEEPSEEK_MODEL, LLM_TEMPERATURE, LLM_MAX_TOKENS,

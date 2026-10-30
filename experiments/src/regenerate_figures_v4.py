@@ -26,7 +26,10 @@ warnings.filterwarnings('ignore')
 # ============================================================
 # CONFIG
 # ============================================================
-BASE = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+BASE = _REPO_ROOT + ""
 RESULTS_DIR = os.path.join(BASE, "experiments/results")
 FIGURES_PATH = os.path.join(BASE, "experiments/results/figures")
 os.makedirs(FIGURES_PATH, exist_ok=True)

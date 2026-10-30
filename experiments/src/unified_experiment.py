@@ -24,7 +24,6 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import average_precision_score
 from sklearn.preprocessing import LabelEncoder
 from scipy import stats as sp_stats
@@ -35,6 +34,8 @@ warnings.filterwarnings('ignore')
 # PATH SETUP — import from sibling modules
 # ============================================================
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
+from eif_numpy import score_frame
 
 # Imports from self_consistency_voting_v2.py
 from self_consistency_voting_v2 import (
@@ -57,7 +58,10 @@ from self_consistency_voting_v2 import (
 )
 
 # Override CACHE_DIR to use cot_fewshot cache (deterministic runs)
-CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/supplementary/cache_cot"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+CACHE_DIR = _REPO_ROOT + "/experiments/results/supplementary/cache_cot"
 
 # Imports from experiment.py
 from experiment import build_llm_prompt, parse_cfd_response
@@ -284,22 +288,12 @@ def run_copod(df_anom):
 def run_eif(df_anom):
     """Extended Isolation Forest baseline on the same df_anom.
 
-    Uses sklearn's IsolationForest (which implements extended/random-split
-    isolation). Returns raw anomaly scores (higher = more anomalous).
+    Random-slope hyperplane splits, extension_level = d-1 (fully extended).
+    Returns raw anomaly scores (higher = more anomalous).
+    See src/eif_numpy.py; verified bit-for-bit against the authors'
+    reference implementation by tests/test_eif_equivalence.py.
     """
-    df_enc = df_anom.copy()
-    for col in df_enc.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc[col] = le.fit_transform(df_enc[col].astype(str))
-
-    iforest = IsolationForest(
-        n_estimators=200,
-        contamination=0.18,
-        random_state=RANDOM_SEED,
-    )
-    iforest.fit(df_enc)
-    # score_samples returns negative anomaly scores; negate so higher = anomalous
-    return -iforest.score_samples(df_enc)
+    return score_frame(df_anom, random_state=RANDOM_SEED)
 
 
 # ============================================================

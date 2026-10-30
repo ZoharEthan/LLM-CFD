@@ -12,28 +12,30 @@ import json, os, sys, re, hashlib, time, warnings
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import average_precision_score
 from scipy import stats as sp_stats
 from openai import OpenAI
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eif_numpy import score_frame
 warnings.filterwarnings('ignore')
 
 # ============================================================
 # CONFIG
 # ============================================================
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/census+income/adult.data"
-CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/p1_revision/cache"
-RESULTS_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/p1_revision"
-FIGURES_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/figures"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+DATA_PATH = _REPO_ROOT + "/experiments/data/census+income/adult.data"
+CACHE_DIR = _REPO_ROOT + "/experiments/results/p1_revision/cache"
+RESULTS_PATH = _REPO_ROOT + "/experiments/results/p1_revision"
+FIGURES_PATH = _REPO_ROOT + "/experiments/results/figures"
 os.makedirs(CACHE_DIR, exist_ok=True)
 os.makedirs(RESULTS_PATH, exist_ok=True)
 os.makedirs(FIGURES_PATH, exist_ok=True)
 
+# Resolved lazily (see cross_llm_experiment.py): no credential prompt on import.
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-if not DEEPSEEK_API_KEY:
-    DEEPSEEK_API_KEY = input("Please enter your DeepSeek API key: ").strip()
-    if not DEEPSEEK_API_KEY:
-        raise ValueError("DEEPSEEK_API_KEY not set. Export it as environment variable or input when prompted.")
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"
 
@@ -551,13 +553,12 @@ def hybrid_vote(all_runs, categorical_threshold=0.5):
 # BASELINES
 # ============================================================
 def compute_eif_scores(df_anom):
-    df_enc = df_anom.copy()
-    for col in df_enc.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc[col] = le.fit_transform(df_enc[col].astype(str))
-    iforest = IsolationForest(n_estimators=200, contamination=0.18, random_state=RANDOM_SEED)
-    iforest.fit(df_enc)
-    return -iforest.score_samples(df_enc)
+    """Extended Isolation Forest (Hariri et al., IEEE TKDE 2021).
+
+    See src/eif_numpy.py; verified bit-for-bit against the authors'
+    reference implementation by tests/test_eif_equivalence.py.
+    """
+    return score_frame(df_anom, random_state=RANDOM_SEED)
 
 def compute_copod_scores(df_anom):
     df_enc = df_anom.copy()

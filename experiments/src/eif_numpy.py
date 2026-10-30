@@ -244,3 +244,34 @@ class ExtendedIsolationForest:
         """Anomaly score in [0, 1]; larger means more anomalous."""
         h = self.path_lengths(X)
         return 2.0 ** (-h / max(self._c_n, 1e-12))
+
+
+def score_frame(df, random_state=None):
+    """EIF anomaly scores for a DataFrame, oriented so larger = more anomalous.
+
+    Convenience wrapper for the experiment scripts: object columns are
+    label-encoded first (the encoding the baselines have always used), then
+    the fully extended forest scores every row.
+
+    This intentionally returns the *raw* score, not a [0,1] rescaling, to
+    match what ``-IsolationForest.score_samples`` returned before. AP is
+    rank-based, so the two are equivalent for every use in this repository;
+    keeping the raw scale avoids surprising callers that combine scores from
+    several methods.
+    """
+    import pandas as pd
+    from sklearn.preprocessing import LabelEncoder
+
+    enc = df.copy()
+    for col in enc.select_dtypes(include=['object']).columns:
+        enc[col] = LabelEncoder().fit_transform(enc[col].astype(str))
+
+    X = np.ascontiguousarray(enc.values, dtype=float)
+    model = ExtendedIsolationForest(
+        n_estimators=200,
+        sample_size=min(256, len(X)),
+        extension_level=None,          # fully extended (d-1)
+        random_state=random_state,
+    ).fit(X)
+    return model.score_samples(X)
+

@@ -13,7 +13,6 @@ Re-exports all symbols from self_consistency_voting.py and adds:
 import json, os, sys, re, warnings
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import average_precision_score, precision_recall_curve
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 from scipy import stats as sp_stats

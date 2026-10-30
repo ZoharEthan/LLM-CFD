@@ -70,16 +70,16 @@ except ImportError:
 # ============================================================
 # CONFIG
 # ============================================================
+# Resolved lazily (see cross_llm_experiment.py): no credential prompt on import.
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-if not DEEPSEEK_API_KEY:
-    DEEPSEEK_API_KEY = input("Please enter your DeepSeek API key: ").strip()
-    if not DEEPSEEK_API_KEY:
-        raise ValueError("DEEPSEEK_API_KEY not set. Export it as environment variable or input when prompted.")
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"
 
-TEMP_CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/hscv_temperature/cache"
-TEMP_RESULTS_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/hscv_temperature"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+TEMP_CACHE_DIR = _REPO_ROOT + "/experiments/results/hscv_temperature/cache"
+TEMP_RESULTS_DIR = _REPO_ROOT + "/experiments/results/hscv_temperature"
 RESULTS_FILE = os.path.join(
     TEMP_RESULTS_DIR, "hscv_ablation_temperature_results.json"
 )

@@ -18,20 +18,25 @@ import warnings
 
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import IsolationForest
 from sklearn.preprocessing import LabelEncoder
 from sklearn.metrics import average_precision_score
 from scipy import stats as sp_stats
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eif_numpy import score_frame
 
 warnings.filterwarnings('ignore')
 
 # ============================================================
 # PATHS & CONSTANTS
 # ============================================================
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
-CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/supplementary/cache"
-RESULTS_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results"
-FIGURES_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/figures"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
+CACHE_DIR = _REPO_ROOT + "/experiments/results/supplementary/cache"
+RESULTS_PATH = _REPO_ROOT + "/experiments/results"
+FIGURES_PATH = _REPO_ROOT + "/experiments/results/figures"
 
 SUPPORT_THRESHOLD = 0.01
 CONFIDENCE_THRESHOLDS = {"high": 0.90, "medium": 0.85, "low": 0.75}
@@ -441,14 +446,12 @@ def evaluate_discovery(discovered, ground_truth):
 # BASELINES
 # ============================================================
 def compute_eif_scores(df_anom):
-    """Extended Isolation Forest baseline."""
-    df_enc = df_anom.copy()
-    for col in df_enc.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc[col] = le.fit_transform(df_enc[col].astype(str))
-    iforest = IsolationForest(n_estimators=200, contamination=0.18, random_state=RANDOM_SEED)
-    iforest.fit(df_enc)
-    return -iforest.score_samples(df_enc)
+    """Extended Isolation Forest (Hariri et al., IEEE TKDE 2021).
+
+    See src/eif_numpy.py; verified bit-for-bit against the authors'
+    reference implementation by tests/test_eif_equivalence.py.
+    """
+    return score_frame(df_anom, random_state=RANDOM_SEED)
 
 
 def copod_scores(df_anom):

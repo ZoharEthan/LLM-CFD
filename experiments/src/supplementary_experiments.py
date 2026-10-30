@@ -30,8 +30,11 @@ warnings.filterwarnings('ignore')
 # CONFIGURATION
 # ============================================================
 
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
-RESULTS_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/supplementary"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
+RESULTS_PATH = _REPO_ROOT + "/experiments/results/supplementary"
 CACHE_PATH = os.path.join(RESULTS_PATH, "cache")
 
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")

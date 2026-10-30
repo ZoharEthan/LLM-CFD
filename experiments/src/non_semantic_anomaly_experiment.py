@@ -7,11 +7,11 @@ Addresses Nature reviewer R2/R3 concern: anomaly injection creates "home-field a
 import json, os, sys, warnings
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import average_precision_score
 warnings.filterwarnings('ignore')
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eif_numpy import score_frame
 
 # Import unified pipeline scoring functions
 from self_consistency_voting_v2 import (
@@ -22,10 +22,13 @@ from self_consistency_voting_v2 import (
     validate_cfds,
 )
 
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
-CACHE_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/cache"
-RESULTS_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results"
-FIGURES_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/figures"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
+CACHE_PATH = _REPO_ROOT + "/experiments/results/cache"
+RESULTS_PATH = _REPO_ROOT + "/experiments/results"
+FIGURES_PATH = _REPO_ROOT + "/experiments/results/figures"
 os.makedirs(FIGURES_PATH, exist_ok=True)
 
 RANDOM_SEED = 42
@@ -289,15 +292,8 @@ def main():
     auprc_llm_sem = average_precision_score(labels_sem, scores_llm_sem)
     print(f"  LLM-CFD AUPRC: {auprc_llm_sem:.3f}")
     
-    # EIF
-    from sklearn.preprocessing import LabelEncoder
-    df_enc_sem = df_sem.copy()
-    for col in df_enc_sem.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc_sem[col] = le.fit_transform(df_enc_sem[col].astype(str))
-    iforest = IsolationForest(n_estimators=200, contamination=0.18, random_state=RANDOM_SEED)
-    iforest.fit(df_enc_sem)
-    scores_eif_sem = -iforest.score_samples(df_enc_sem)
+    # EIF (genuine Extended Isolation Forest, see src/eif_numpy.py)
+    scores_eif_sem = score_frame(df_sem, random_state=RANDOM_SEED)
     auprc_eif_sem = average_precision_score(labels_sem, scores_eif_sem)
     print(f"  EIF AUPRC:     {auprc_eif_sem:.3f}")
     
@@ -318,14 +314,8 @@ def main():
     auprc_llm_nonsem = average_precision_score(labels_nonsem, scores_llm_nonsem)
     print(f"  LLM-CFD AUPRC: {auprc_llm_nonsem:.3f}")
     
-    # EIF
-    df_enc_nonsem = df_nonsem.copy()
-    for col in df_enc_nonsem.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc_nonsem[col] = le.fit_transform(df_enc_nonsem[col].astype(str))
-    iforest2 = IsolationForest(n_estimators=200, contamination=0.18, random_state=RANDOM_SEED)
-    iforest2.fit(df_enc_nonsem)
-    scores_eif_nonsem = -iforest2.score_samples(df_enc_nonsem)
+    # EIF (genuine Extended Isolation Forest, see src/eif_numpy.py)
+    scores_eif_nonsem = score_frame(df_nonsem, random_state=RANDOM_SEED)
     auprc_eif_nonsem = average_precision_score(labels_nonsem, scores_eif_nonsem)
     print(f"  EIF AUPRC:     {auprc_eif_nonsem:.3f}")
     

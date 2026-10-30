@@ -106,6 +106,8 @@ python3 src/regenerate_figures_nature.py
 
 > `src/eif_numpy.py` 按 Hariri 等（IEEE TKDE 2021, 33(4):1479-1489）的随机斜率超平面实现，并以 `tests/test_eif_equivalence.py` 与作者参考实现（PyPI `eif` 1.0.2）逐位比对，在 extension_level=0/2/5 下最大偏差为 0。sklearn 的 `IsolationForest` 仅做特征子采样，切分仍轴平行，**不是** EIF，故未采用。
 
+全部 8 个涉及 EIF 的脚本（`experiment.py`、`experiment_fixed.py`、`unified_experiment.py`、`cross_llm_experiment.py`、`adult_hscv_experiment.py`、`adult_unified_experiment.py`、`self_consistency_voting.py`、`non_semantic_anomaly_experiment.py`）均调用同一实现，任一脚本单独重跑都得到论文中的数值。脚本内的数据/结果路径已改为按 `__file__` 推导仓库根，不再依赖原运行环境的绝对路径。
+
 ### 2. 统一评估流程 `src/unified_experiment.py`
 
 论文 §4 主实验使用的统一评估脚本，包含：

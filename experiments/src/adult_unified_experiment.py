@@ -16,16 +16,21 @@ import json, os, sys, re, hashlib, warnings
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import average_precision_score, precision_recall_curve
 from scipy import stats as sp_stats
 # combinations removed: single-attribute only (consistent with Telco)
 warnings.filterwarnings('ignore')
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eif_numpy import score_frame
+
 # ============================================================
 # CONFIG
 # ============================================================
-BASE = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+BASE = _REPO_ROOT + ""
 DATA_PATH = os.path.join(BASE, "experiments/data/census+income/adult.data")
 CACHE_DIR = os.path.join(BASE, "experiments/results/p1_revision/cache")
 RESULTS_PATH = os.path.join(BASE, "experiments/results/unified")
@@ -513,13 +518,12 @@ def hybrid_vote(all_runs, categorical_threshold=0.5):
 # BASELINES
 # ============================================================
 def compute_eif_scores(df_anom):
-    df_enc = df_anom.copy()
-    for col in df_enc.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc[col] = le.fit_transform(df_enc[col].astype(str))
-    iforest = IsolationForest(n_estimators=200, contamination=0.18, random_state=RANDOM_SEED)
-    iforest.fit(df_enc)
-    return -iforest.score_samples(df_enc)
+    """Extended Isolation Forest (Hariri et al., IEEE TKDE 2021).
+
+    See src/eif_numpy.py; verified bit-for-bit against the authors'
+    reference implementation by tests/test_eif_equivalence.py.
+    """
+    return score_frame(df_anom, random_state=RANDOM_SEED)
 
 def compute_copod_scores(df_anom):
     df_enc = df_anom.copy()

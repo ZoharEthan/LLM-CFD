@@ -24,7 +24,6 @@ from typing import Any
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import (
     precision_score, recall_score, f1_score,
     average_precision_score, ndcg_score, precision_recall_curve

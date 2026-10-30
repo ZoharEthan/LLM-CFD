@@ -11,14 +11,17 @@ from openai import OpenAI
 warnings.filterwarnings('ignore')
 
 # Import build_llm_prompt from experiment.py (same as cross_llm_experiment.py)
-sys.path.insert(0, "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/src")
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+sys.path.insert(0, _REPO_ROOT + "/experiments/src")
 from experiment import build_llm_prompt, parse_cfd_response
 
 # ============================================================
 # CONFIG
 # ============================================================
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
-CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/supplementary/cache_cot"
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
+CACHE_DIR = _REPO_ROOT + "/experiments/results/supplementary/cache_cot"
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"

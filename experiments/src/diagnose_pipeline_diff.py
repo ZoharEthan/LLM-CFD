@@ -6,7 +6,10 @@ import pandas as pd
 from sklearn.metrics import f1_score, average_precision_score
 warnings.filterwarnings('ignore')
 
-sys.path.insert(0, "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/src")
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+sys.path.insert(0, _REPO_ROOT + "/experiments/src")
 
 # Import both pipelines
 from self_consistency_voting_v2 import (
@@ -21,8 +24,8 @@ from cross_llm_experiment import (
     apply_p99_clip as clip_cross, inject_anomalies as inject_cross
 )
 
-CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/supplementary/cache_cot"
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
+CACHE_DIR = _REPO_ROOT + "/experiments/results/supplementary/cache_cot"
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
 
 def main():
     # Load data

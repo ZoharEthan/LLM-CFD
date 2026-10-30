@@ -14,8 +14,11 @@ warnings.filterwarnings('ignore')
 # Add parent to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
-RESULTS_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/ctane"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
+RESULTS_PATH = _REPO_ROOT + "/experiments/results/ctane"
 os.makedirs(RESULTS_PATH, exist_ok=True)
 
 # Ground truth (same as p0_revision_experiments.py)

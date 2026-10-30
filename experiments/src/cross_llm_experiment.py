@@ -7,42 +7,42 @@ then compares CFD discovery quality and anomaly detection performance.
 
 Demonstrates that LLM-CFD is model-agnostic, not dependent on a specific LLM.
 """
-import json, os, re, hashlib, time, warnings
+import json, os, re, sys, hashlib, time, warnings
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import average_precision_score
 from scipy import stats as sp_stats
 from openai import OpenAI
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eif_numpy import score_frame
 warnings.filterwarnings('ignore')
 
 # ============================================================
 # CONFIG
 # ============================================================
-DATA_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/data/telco_churn.csv"
-CACHE_DIR = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/cross_llm/cache"
-RESULTS_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/cross_llm"
-FIGURES_PATH = "/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/results/figures"
+# Repo root derived from this file, so the scripts run anywhere.
+_REPO_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(
+    os.path.abspath(__file__))))
+DATA_PATH = _REPO_ROOT + "/experiments/data/telco_churn.csv"
+CACHE_DIR = _REPO_ROOT + "/experiments/results/cross_llm/cache"
+RESULTS_PATH = _REPO_ROOT + "/experiments/results/cross_llm"
+FIGURES_PATH = _REPO_ROOT + "/experiments/results/figures"
 os.makedirs(CACHE_DIR, exist_ok=True)
 os.makedirs(RESULTS_PATH, exist_ok=True)
 os.makedirs(FIGURES_PATH, exist_ok=True)
 
 # GLM API (Zhipu AI)
+# Resolved lazily: importing this module must not require credentials, and
+# must not block on input(), because other scripts import it for the EIF
+# helper. The key is checked at the point a client is constructed.
 GLM_API_KEY = os.environ.get("GLM_API_KEY", "")
-if not GLM_API_KEY:
-    GLM_API_KEY = input("Please enter your GLM API key: ").strip()
-    if not GLM_API_KEY:
-        raise ValueError("GLM_API_KEY not set. Export it as environment variable or input when prompted.")
 GLM_BASE_URL = "https://open.bigmodel.cn/api/paas/v4/"
 GLM_MODEL = "glm-4.7-flash"
 
 # DeepSeek API (for comparison, already cached)
 DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", "")
-if not DEEPSEEK_API_KEY:
-    DEEPSEEK_API_KEY = input("Please enter your DeepSeek API key: ").strip()
-    if not DEEPSEEK_API_KEY:
-        raise ValueError("DEEPSEEK_API_KEY not set. Export it as environment variable or input when prompted.")
 DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 DEEPSEEK_MODEL = "deepseek-chat"
 
@@ -134,7 +134,7 @@ def inject_anomalies(df, seed=42):
 # ============================================================
 # Import the prompt builder from experiment.py
 import sys
-sys.path.insert(0, '/sessions/69e790d3616697199023cd0a/workspace/mqw7dr6nxdtvfujn/experiments/src')
+sys.path.insert(0, _REPO_ROOT + '/experiments/src')
 from experiment import build_llm_prompt, parse_cfd_response
 
 def parse_cfds(response_text, valid_columns):
@@ -185,9 +185,24 @@ def parse_cfds(response_text, valid_columns):
 # ============================================================
 # LLM API CALLS
 # ============================================================
+def _require_key(value, env_name):
+    """Fail loudly at call time rather than at import time.
+
+    Importing a module must never prompt for credentials: sibling scripts
+    import these modules just for the EIF baseline.
+    """
+    if not value:
+        raise RuntimeError(
+            f"{env_name} is not set. Export it, e.g. "
+            f"export {env_name}=..., before calling the LLM API."
+        )
+    return value
+
+
 def call_glm(prompt, temperature=0.0):
     """Call GLM-4.7-Flash API with larger max_tokens to avoid truncation."""
-    client = OpenAI(api_key=GLM_API_KEY, base_url=GLM_BASE_URL)
+    client = OpenAI(api_key=_require_key(GLM_API_KEY, "GLM_API_KEY"),
+                    base_url=GLM_BASE_URL)
     response = client.chat.completions.create(
         model=GLM_MODEL,
         messages=[
@@ -201,7 +216,8 @@ def call_glm(prompt, temperature=0.0):
 
 def call_deepseek(prompt, temperature=0.0):
     """Call DeepSeek API."""
-    client = OpenAI(api_key=DEEPSEEK_API_KEY, base_url=DEEPSEEK_BASE_URL)
+    client = OpenAI(api_key=_require_key(DEEPSEEK_API_KEY, "DEEPSEEK_API_KEY"),
+                    base_url=DEEPSEEK_BASE_URL)
     response = client.chat.completions.create(
         model=DEEPSEEK_MODEL,
         messages=[
@@ -433,13 +449,12 @@ def evaluate_discovery(discovered, ground_truth):
     return {'precision': precision, 'recall': recall, 'f1': f1, 'tp': tp, 'fp': fp, 'fn': fn}
 
 def compute_eif_scores(df_anom):
-    df_enc = df_anom.copy()
-    for col in df_enc.select_dtypes(include=['object']).columns:
-        le = LabelEncoder()
-        df_enc[col] = le.fit_transform(df_enc[col].astype(str))
-    iforest = IsolationForest(n_estimators=200, contamination=0.18, random_state=RANDOM_SEED)
-    iforest.fit(df_enc)
-    return -iforest.score_samples(df_enc)
+    """Extended Isolation Forest (Hariri et al., IEEE TKDE 2021).
+
+    See src/eif_numpy.py; verified bit-for-bit against the authors'
+    reference implementation by tests/test_eif_equivalence.py.
+    """
+    return score_frame(df_anom, random_state=RANDOM_SEED)
 
 # ============================================================
 # MAIN
