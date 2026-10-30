@@ -16,10 +16,10 @@ Reproduced values (AP, 5-seed mean) — these equal Table 2:
     CTANE + prior         0.705
     LLM-CFD               0.514
     CTANE (algorithm)     0.349
-    EIF                   0.344
-    LLM+EIF+COPOD         0.288
-    EIF+COPOD             0.283
+    EIF                   0.255
     LLM+COPOD             0.247
+    LLM+EIF+COPOD         0.245
+    EIF+COPOD             0.241
     COPOD                 0.230
     Random                0.181
 
@@ -57,12 +57,13 @@ OUT_DIR = os.path.join(RESULTS, "figures")
 SEED = 42
 
 # Draw order low -> high AP so the strongest curve ends up on top.
+# Order matches the 5-seed means in fig_pr_multiseed.json (real EIF, AP 0.255).
 STYLE = {
     "Random": ("#C8C8C8", ":", 1.0),
     "COPOD": ("#BDCBD6", "-", 1.2),
-    "LLM+COPOD": ("#4E7FA6", ":", 1.3),
     "EIF+COPOD": ("#A9BCCB", "--", 1.2),
     "LLM+EIF+COPOD": ("#7EA2C0", "-.", 1.3),
+    "LLM+COPOD": ("#4E7FA6", ":", 1.3),
     "EIF": ("#8FA6BA", "-", 1.3),
     "CTANE (algorithm)": ("#6E8CA6", "--", 1.4),
     "LLM-CFD": ("#2F5D8A", "-", 1.7),

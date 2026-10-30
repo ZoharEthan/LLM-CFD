@@ -31,6 +31,9 @@ from sklearn.metrics import (
 )
 from scipy import stats
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from eif_numpy import ExtendedIsolationForest
+
 
 warnings.filterwarnings('ignore')
 
@@ -736,21 +739,28 @@ def compute_anomaly_scores(df: pd.DataFrame, validated_cfds: list[dict]) -> np.n
 # ============================================================
 
 def run_eif(X: np.ndarray, contamination: float = 0.18) -> np.ndarray:
-    """Extended Isolation Forest using sklearn's IsolationForest."""
-    print("\n  Running EIF baseline...")
-    model = IsolationForest(
+    """Extended Isolation Forest (Hariri et al., IEEE TKDE 2021).
+
+    Random-slope hyperplane splits with extension_level = d-1 (fully
+    extended), 200 trees, subsample 256 — the author-recommended defaults.
+    Delegates to src/eif_numpy.py, which is verified bit-for-bit against the
+    authors' reference implementation (`eif` 1.0.2) by
+    tests/test_eif_equivalence.py.
+
+    Note: sklearn's IsolationForest is NOT used. Its `max_features` argument
+    only subsamples features per tree; every split remains axis-parallel, so
+    it cannot represent EIF's oblique hyperplanes.
+    """
+    print("\n  Running EIF baseline (extension_level = d-1)...")
+    model = ExtendedIsolationForest(
         n_estimators=200,
-        contamination=contamination,
+        sample_size=min(256, len(X)),
+        extension_level=None,          # None -> d-1, fully extended
         random_state=RANDOM_SEED,
-        n_jobs=-1,
     )
-    # sklearn IF uses extended (random slope) splits by default
-    raw_scores = model.fit_predict(X)
-    # Convert to anomaly scores [0,1] where 1 = most anomalous
-    scores = model.score_samples(X)
-    scores = -scores  # Higher = more anomalous
-    scores = (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
-    return scores
+    model.fit(X)
+    scores = model.score_samples(X)    # already oriented: higher = more anomalous
+    return (scores - scores.min()) / (scores.max() - scores.min() + 1e-8)
 
 
 def run_copod(X: np.ndarray, contamination: float = 0.18) -> np.ndarray:

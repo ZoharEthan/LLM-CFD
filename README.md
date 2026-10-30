@@ -102,7 +102,9 @@ python3 src/regenerate_figures_nature.py
 | Phase 3 | 异常评分（构建 n×m 违规矩阵 V，梯度违规度量，冗余消减，加权聚合，p99裁剪） | `compute_anomaly_scores()` |
 | Phase 4 | 可解释输出（top-5% 记录 + 自然语言解释） | 嵌入主流程 |
 
-基线方法：`run_eif()`（Extended Isolation Forest）、`run_copod()`（COPOD Copula 离群点检测）。
+基线方法：`run_eif()`（Extended Isolation Forest，见 `src/eif_numpy.py`）、`run_copod()`（COPOD Copula 离群点检测）。
+
+> `src/eif_numpy.py` 按 Hariri 等（IEEE TKDE 2021, 33(4):1479-1489）的随机斜率超平面实现，并以 `tests/test_eif_equivalence.py` 与作者参考实现（PyPI `eif` 1.0.2）逐位比对，在 extension_level=0/2/5 下最大偏差为 0。sklearn 的 `IsolationForest` 仅做特征子采样，切分仍轴平行，**不是** EIF，故未采用。
 
 ### 2. 统一评估流程 `src/unified_experiment.py`
 
@@ -219,7 +221,7 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 | 方法 | AP | 说明 |
 |---|---|---|
 | COPOD | 0.230 | 无需 API |
-| EIF | 0.344 | 无需 API |
+| EIF | 0.255 | 无需 API |
 | 纯 CTANE（835 条 fd，无人工特例） | 0.349 | 算法本体 |
 | **LLM-CFD** | **0.514** | 1 次调用 |
 | CTANE + 人工特例 | 0.705 | 硬编码 1 条跨列一致性约束 |
@@ -240,12 +242,12 @@ python3 src/make_fig_pr.py        # PR 曲线 + 图件 → results/figures/fig2_
 
 口径说明：PR 曲线是单次注入的对象，5 次注入无法平均为一条曲线，故**曲线按 seed=42 绘制、图例数字取 5 种子均值**（与上表一致）。已验证 seed=42 的 AP 排序与 5 种子均值排序完全相同，故所绘曲线可代表正文报告的排序关系。
 
-图 2 含 10 条曲线，其中 6 条对应正文表 2，另 4 条为补充组合（5 种子均值 AP）：
+图 2 含 10 条曲线，与正文表 2 的 10 行一一对应（5 种子均值 AP）：
 
 | 补充组合 | AP |
 |---|---|
-| LLM+EIF+COPOD | 0.288 |
-| EIF+COPOD | 0.283 |
+| LLM+EIF+COPOD | 0.245 |
+| EIF+COPOD | 0.241 |
 | LLM+COPOD | 0.247 |
 | Random | 0.181 |
 
@@ -264,10 +266,10 @@ python3 src/make_fig_pr.py        # PR 曲线 + 图件 → results/figures/fig2_
 | LLM-CFD | 0.384 |
 | 纯 CTANE | 0.174 |
 | CTANE + 人工特例 | 0.475 |
-| EIF | 0.144 |
+| EIF | 0.080 |
 | COPOD | 0.072 |
 
-LLM-CFD 对 EIF 的优势倍数由 18% 注入时的约 1.5 倍增至约 **2.7 倍**。
+LLM-CFD 对 EIF 的优势倍数由 18% 注入时的约 2.0 倍（0.514/0.255）增至约 **4.8 倍**（0.384/0.080）。
 
 ## Ground Truth 标注
 
