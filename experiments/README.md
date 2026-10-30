@@ -25,7 +25,9 @@ LLM 驱动的条件函数依赖（Conditional Functional Dependency, CFD）发�
 │   │   ├── non_semantic_anomaly_experiment.py # 非语义异常控制实验
 │   │   ├── generate_cot_runs.py         # CoT+少样本 15次确定性运行生成
 │   │   ├── regenerate_figures_nature.py # Nature 风格论文图表生成
-│   │   └── regenerate_figures_v4.py     # 论文图表生成脚本
+│   │   ├── regenerate_figures_v4.py     # 论文图表生成脚本
+│   │   ├── fig_pr_multiseed.py          # 图2 数据源：5 种子（42-46）AP 汇总
+│   │   └── make_fig_pr.py               # 图2 生成：PR 曲线 + 图例 AP（可完全复现）
 │   ├── results/
 │   │   ├── cache/                       # LLM 响应缓存（主实验）
 │   │   ├── supplementary/               # 补充实验结果（含 cache/ 和 cache_cot/）
@@ -196,41 +198,76 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 
 ## 主要结果
 
-### 主实验（CoT+少样本策略, temp=0.0, 15次运行）
+> **数值口径**：以下为修复评分函数缺陷（enum 空期望导致分数饱和）后的重算结果，5 个注入种子均值，与论文终稿一致。
+> 形式化定义与命题证明见 [FORMAL_DEFINITIONS.md](FORMAL_DEFINITIONS.md)。
 
-| 指标 | LLM-CFD | CTANE | CFDMiner | EIF | COPOD |
-|------|---------|-------|----------|-----|-------|
-| F1 | 0.737 | 0.028 | 0.003 | — | — |
-| AUPRC | 0.495 | 0.272 | 0.387 | 0.205 | 0.167 |
-| 查全率 | 100% | 53.3% | 26.7% | — | — |
+### 规则发现质量（Telco）
 
-- 在 fd/enum 约束上 LLM-CFD 与 CTANE 查全率持平（100%），性能差异来自 range/logic/consistency 约束
-- bootstrap CI (B=1000): LLM-CFD [0.470, 0.521] vs EIF [0.192, 0.221]，p<0.001
-- 确定性输出：15/15次运行 IQR=0.000
+| 方法 | 精确率 | 查全率 | F1 | 候选数 |
+|---|---|---|---|---|
+| LLM-CFD（CoT+少样本） | 0.609 | 0.933 | **0.737** | 28 |
+| LLM-CFD（零样本） | 0.667 | 0.533 | 0.593 | 15 |
+| CTANE（最优配置 support=0.05, conf=0.95） | 0.014 | 0.800 | 0.028 | 856 |
+| CFDMiner | 0.006 | 0.867 | 0.011 | 26,061 |
 
-### LLM-CFDMiner 融合
+**约束类型覆盖**：函数依赖两者持平（各 7/7）；数值范围 2/2 对 1/2；枚举 4/4 对 3/4（SeniorCitizen 未命中）；逻辑约束两者均未发现；一致性各 1/1（CTANE 的命中依赖代码中硬编码的人工特例）。
 
-| 配置 | AUPRC | 额外API调用 |
-|------|-------|------------|
-| LLM-CFD 单独 | 0.495 | 0 |
-| LLM-CFDMiner（评分平均） | 0.561 | 0 |
-| LLM-CFDMiner（规则过滤） | 0.560 | +155 |
-| LLM-CFD+COPOD 融合 | 0.309 | +1 |
+> 注：F1 为「属性-类型键匹配」口径，不比较条件取值与期望模式的具体内容。
+
+### 异常检验（Telco，5 种子均值）
+
+| 方法 | AP | 说明 |
+|---|---|---|
+| COPOD | 0.230 | 无需 API |
+| EIF | 0.344 | 无需 API |
+| 纯 CTANE（835 条 fd，无人工特例） | 0.349 | 算法本体 |
+| **LLM-CFD** | **0.514** | 1 次调用 |
+| CTANE + 人工特例 | 0.705 | 硬编码 1 条跨列一致性约束 |
+| **LLM+CTANE（0.7/0.3）** | **0.711** | 1 次调用 |
+
+- LLM-CFD 较纯 CTANE 提升 **47%**（Δ=+0.165，p<0.001，5 种子配对 t 检验）
+- LLM+CTANE 较 CTANE+人工特例仅 +0.0065（p=0.019），表明两者信号高度重叠
+
+**图 2（PR 曲线）的可复现性**。图 2 的全部曲线与图例数值可由代码重建：
+
+```bash
+cd experiments
+python3 src/fig_pr_multiseed.py   # 5 种子（42-46）AP 汇总 → results/supplementary/fig_pr_multiseed.json
+python3 src/make_fig_pr.py        # PR 曲线 + 图件 → results/figures/fig2_pr_curves.png
+```
+
+输入锁定为 `data/telco_churn.csv`、`results/supplementary/cache_cot/cot_run_00.json` 与 numpy seed 42–46；PR 数组落盘至 `results/supplementary/fig_pr_data.json`。
+
+口径说明：PR 曲线是单次注入的对象，5 次注入无法平均为一条曲线，故**曲线按 seed=42 绘制、图例数字取 5 种子均值**（与上表一致）。已验证 seed=42 的 AP 排序与 5 种子均值排序完全相同，故所绘曲线可代表正文报告的排序关系。
+
+图 2 含 10 条曲线，其中 6 条对应正文表 2，另 4 条为补充组合（5 种子均值 AP）：
+
+| 补充组合 | AP |
+|---|---|
+| LLM+EIF+COPOD | 0.288 |
+| EIF+COPOD | 0.283 |
+| LLM+COPOD | 0.247 |
+| Random | 0.181 |
+
 
 ### 跨 LLM 验证
 
-| 模型 | F1 | AUPRC | Jaccard |
-|------|-----|-------|---------|
-| DeepSeek-V4-Flash | 0.737 | 0.495 | — |
-| GLM-4.7-Flash | 0.718 | 0.495 | 0.920 |
+| 模型 | F1 | 候选规则 Jaccard |
+|---|---|---|
+| DeepSeek-V4-Flash | 0.737 | — |
+| GLM-4.7-Flash | 0.718 | 0.920 |
 
-### 5% 注入率实验
+### 5% 低异常率（稳健性）
 
-| 方法 | AUPRC | F1 |
-|------|-------|-----|
-| LLM-CFD | 0.285 | 0.292 |
-| EIF | 0.069 | 0.085 |
-| COPOD | 0.049 | 0.034 |
+| 方法 | AP |
+|---|---|
+| LLM-CFD | 0.384 |
+| 纯 CTANE | 0.174 |
+| CTANE + 人工特例 | 0.475 |
+| EIF | 0.144 |
+| COPOD | 0.072 |
+
+LLM-CFD 对 EIF 的优势倍数由 18% 注入时的约 1.5 倍增至约 **2.7 倍**。
 
 ## Ground Truth 标注
 
@@ -243,34 +280,14 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 
 ## 补充材料
 
-### 1. `experiments/SUPPLEMENTARY_THEORY.md` —— 实验数据明细
+论文正文引用的补充理论材料位于 `experiments/SUPPLEMENTARY_THEORY.md`，包含：
 
-1. CTANE 超参数搜索完整结果（Telco + Adult）
-2. CoT+少样本策略 15 次运行详细数据
+1. CTANE超参数搜索完整结果（Telco + Adult）
+2. CoT+少样本策略15次运行详细数据
 3. 提示词模板引用
 4. 真实世界数据质量验证
 
-### 2. `experiments/FORMAL_DEFINITIONS.md` —— 形式化定义与命题证明
-
-> **终稿因 5,600 字上限省略了附录 A，此处完整归档。**
-> 内容取自原版稿附录 A、§3.3、§3.5，仅做格式规范化（Word 公式转 LaTeX），**不新增定义或结论**。
-
-| 章节 | 内容 |
-|---|---|
-| §1 | 定义 1（CFD：变量约束 + 常量约束） |
-| §2 | 定义 2（LLM-CFD 任务三目标） |
-| §3 | 定义 3（CFD 规则空间 Φ_R，五类约束的形式化对应） |
-| §4 | 定义 4（四元组 S=(Σ, M_LLM, V_CFD, F_risk)，含 HSCV 投票规则） |
-| §5 | 定义 5（风险评分 Risk = αV_CFD + βM_sem + γM_biz） |
-| §6 | 式(1) 条件支持度、式(2) 置信度 |
-| §7 | 梯度违规度量（range / enum-fd / consistency / logic 四类） |
-| §8 | 式(3) 冗余消减 + top-k 聚合 |
-| §9 | 命题 1（CFD 验证的不变性）及其证明 |
-| §10 | 命题 2（冲突消解近似保证，**(1−1/e) 界**）及其证明 |
-| §11 | 与正文的逐条对应表 |
-| §12 | 复现方式（函数入口对应） |
-
-注：双向验证机制、CFD 规则冲突消解分析、多层级数据质量风险检验在终稿中压缩至 §3.4–§3.6。
+注：双向验证机制、CFD规则冲突消解分析、多层级数据质量风险检验、形式化框架完整定义已整合至论文正文§3.4-§3.7。
 
 ## 注意事项
 

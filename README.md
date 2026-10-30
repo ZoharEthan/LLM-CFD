@@ -25,7 +25,9 @@ LLM 驱动的条件函数依赖（Conditional Functional Dependency, CFD）发�
 │   │   ├── non_semantic_anomaly_experiment.py # 非语义异常控制实验
 │   │   ├── generate_cot_runs.py         # CoT+少样本 15次确定性运行生成
 │   │   ├── regenerate_figures_nature.py # Nature 风格论文图表生成
-│   │   └── regenerate_figures_v4.py     # 论文图表生成脚本
+│   │   ├── regenerate_figures_v4.py     # 论文图表生成脚本
+│   │   ├── fig_pr_multiseed.py          # 图2 数据源：5 种子（42-46）AP 汇总
+│   │   └── make_fig_pr.py               # 图2 生成：PR 曲线 + 图例 AP（可完全复现）
 │   ├── results/
 │   │   ├── cache/                       # LLM 响应缓存（主实验）
 │   │   ├── supplementary/               # 补充实验结果（含 cache/ 和 cache_cot/）
@@ -225,6 +227,28 @@ Phase 3 异常评分使用梯度违规度量（非二值标志）：
 
 - LLM-CFD 较纯 CTANE 提升 **47%**（Δ=+0.165，p<0.001，5 种子配对 t 检验）
 - LLM+CTANE 较 CTANE+人工特例仅 +0.0065（p=0.019），表明两者信号高度重叠
+
+**图 2（PR 曲线）的可复现性**。图 2 的全部曲线与图例数值可由代码重建：
+
+```bash
+cd experiments
+python3 src/fig_pr_multiseed.py   # 5 种子（42-46）AP 汇总 → results/supplementary/fig_pr_multiseed.json
+python3 src/make_fig_pr.py        # PR 曲线 + 图件 → results/figures/fig2_pr_curves.png
+```
+
+输入锁定为 `data/telco_churn.csv`、`results/supplementary/cache_cot/cot_run_00.json` 与 numpy seed 42–46；PR 数组落盘至 `results/supplementary/fig_pr_data.json`。
+
+口径说明：PR 曲线是单次注入的对象，5 次注入无法平均为一条曲线，故**曲线按 seed=42 绘制、图例数字取 5 种子均值**（与上表一致）。已验证 seed=42 的 AP 排序与 5 种子均值排序完全相同，故所绘曲线可代表正文报告的排序关系。
+
+图 2 含 10 条曲线，其中 6 条对应正文表 2，另 4 条为补充组合（5 种子均值 AP）：
+
+| 补充组合 | AP |
+|---|---|
+| LLM+EIF+COPOD | 0.288 |
+| EIF+COPOD | 0.283 |
+| LLM+COPOD | 0.247 |
+| Random | 0.181 |
+
 
 ### 跨 LLM 验证
 
